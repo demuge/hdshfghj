@@ -17,15 +17,9 @@ if not BOT_TOKEN:
     raise RuntimeError("BOT_TOKEN не найден")
 
 
-# =========================
-# ГЛАВНОЕ МЕНЮ
-# =========================
-
 def main_menu():
     keyboard = [
-        [
-            InlineKeyboardButton("🎁 NFT-подарки", callback_data="nft"),
-        ],
+        [InlineKeyboardButton("🎁 NFT-подарки", callback_data="nft")],
         [
             InlineKeyboardButton("💰 Мои покупки", callback_data="purchases"),
             InlineKeyboardButton("👤 Профиль", callback_data="profile"),
@@ -35,21 +29,13 @@ def main_menu():
     return InlineKeyboardMarkup(keyboard)
 
 
-# =========================
-# /start
-# =========================
-
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "⭐ Добро пожаловать!\n\n"
-        "Здесь ты сможешь покупать и продавать NFT-подарки.",
+        "Здесь можно покупать и продавать NFT-подарки.",
         reply_markup=main_menu(),
     )
 
-
-# =========================
-# КНОПКИ
-# =========================
 
 async def button_handler(
     update: Update,
@@ -58,21 +44,10 @@ async def button_handler(
     query = update.callback_query
     await query.answer()
 
-    # NFT
     if query.data == "nft":
         keyboard = [
-            [
-                InlineKeyboardButton(
-                    "🛍 Каталог",
-                    callback_data="catalog"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    "⬅️ Назад",
-                    callback_data="back"
-                )
-            ],
+            [InlineKeyboardButton("🛍 Каталог", callback_data="catalog")],
+            [InlineKeyboardButton("⬅️ Назад", callback_data="back")],
         ]
 
         await query.edit_message_text(
@@ -81,53 +56,33 @@ async def button_handler(
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
 
-    # Каталог
     elif query.data == "catalog":
         keyboard = [
-            [
-                InlineKeyboardButton(
-                    "⬅️ Назад",
-                    callback_data="nft"
-                )
-            ]
+            [InlineKeyboardButton("⬅️ Назад", callback_data="nft")]
         ]
 
         await query.edit_message_text(
             "🛍 Каталог\n\n"
-            "Пока здесь нет товаров.\n\n"
-            "Следующим этапом добавим NFT-подарки, "
-            "цены и покупку.",
+            "Каталог пока пуст.",
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
 
-    # Покупки
     elif query.data == "purchases":
         keyboard = [
-            [
-                InlineKeyboardButton(
-                    "⬅️ Назад",
-                    callback_data="back"
-                )
-            ]
+            [InlineKeyboardButton("⬅️ Назад", callback_data="back")]
         ]
 
         await query.edit_message_text(
             "💰 Мои покупки\n\n"
-            "У тебя пока нет покупок.",
+            "Покупок пока нет.",
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
 
-    # Профиль
     elif query.data == "profile":
         user = query.from_user
 
         keyboard = [
-            [
-                InlineKeyboardButton(
-                    "⬅️ Назад",
-                    callback_data="back"
-                )
-            ]
+            [InlineKeyboardButton("⬅️ Назад", callback_data="back")]
         ]
 
         await query.edit_message_text(
@@ -137,7 +92,6 @@ async def button_handler(
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
 
-    # Назад
     elif query.data == "back":
         await query.edit_message_text(
             "⭐ Главное меню",
@@ -145,22 +99,13 @@ async def button_handler(
         )
 
 
-# =========================
-# ЗАПУСК
-# =========================
-
 def main():
     app = Application.builder().token(BOT_TOKEN).build()
 
-    app.add_handler(
-        CommandHandler("start", start)
-    )
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(button_handler))
 
-    app.add_handler(
-        CallbackQueryHandler(button_handler)
-    )
-
-    print("⭐ Бот запущен!")
+    print("⭐ Бот запущен")
 
     app.run_polling()
 
